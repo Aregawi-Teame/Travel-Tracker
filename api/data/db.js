@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 require("../models/travel_history.model");
-mongoose.connect(process.env.DB_URL);
+mongoose.connect(process.env.DB_URL, {useNewUrlParser: true});
 
 mongoose.connection.on("connected",function(){
     console.log(process.env.MONGOOSE_CONNECTED_MSG, process.env.DB_NAME);

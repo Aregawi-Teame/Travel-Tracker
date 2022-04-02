@@ -19,7 +19,7 @@ const TravelHistorySchema = mongoose.Schema({
         type: String,
         required: true
     },
-    populations: {
+    population: {
         type: Number,
         required: true
     },

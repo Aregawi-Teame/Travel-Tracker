@@ -1,11 +1,9 @@
 require("dotenv").config();
 require("./api/data/db");
-
 const path = require("path");
-
 const express = require("express");
 
-const userRoutes = require("./api/routes/user");
+const tourist_attractionRoutes = require("./api/routes/tourist_attraction");
 const travelerRoutes = require("./api/routes/traveler");
 
 const app = express();
@@ -18,7 +16,7 @@ app.use((req, res, next)=>{
     next();
 });
 
-app.use("/api", userRoutes);
+app.use("/api", tourist_attractionRoutes);
 app.use("/api", travelerRoutes);
 
 app.use(express.static(path.join(__dirname,"public")));

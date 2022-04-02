@@ -1,0 +1,27 @@
+{
+  "devDependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "mongoose": "^6.2.9"
+  },
+  "scripts": {
+    "dev": "nodemon --inspect"
+  },
+  "name": "travel-tracker",
+  "version": "1.0.0",
+  "description": "This is my travel history tracker",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aregawi-Teame/Travel-Tracker.git"
+  },
+  "keywords": [
+    "Travel-tracker"
+  ],
+  "author": "Aregawi T. Arefe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Aregawi-Teame/Travel-Tracker/issues"
+  },
+  "homepage": "https://github.com/Aregawi-Teame/Travel-Tracker#readme"
+}

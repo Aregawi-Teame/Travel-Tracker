@@ -3,13 +3,13 @@ const helper_module = require("./helper_module");
 const Travel = mongoose.model(process.env.TRAVEL_MODEL);
 
 const travelHistoryController = (()=>{
-    const response = {
-        status: 200,
-        message: {}
-    }
   
     const createNewTravelHistory = function(req, res){
         console.log("Create new travel history controller called")
+        const response = {
+            status: 200,
+            message: {}
+        }
         if(!helper_module.isValidData(req, res, response)) return;
         else{
             const country = req.body.country;
@@ -19,11 +19,16 @@ const travelHistoryController = (()=>{
                 population: population,
                 tourist_attractions: []
             }
-            Travel.create(newTravel, (err, savedTravel)=>helper_module.checkAndSendResponse(err, savedTravel,response, res));
+            Travel.create(newTravel, (err, savedTravel)=>helper_module.checkAndSendResponse(err, savedTravel ? {"Message": "Successfully Saved", savedTravel}: false,response, res));
         };
     };
+    
     const getAll = function(req, res){
         console.log("Get All Travel History controller called");
+        const response = {
+            status: 200,
+            message: {}
+        }
         let offset = 0;
         let count = 5;
         const maxCount = 10;
@@ -51,51 +56,83 @@ const travelHistoryController = (()=>{
     
     const getOne = function(req, res){
         console.log("getOne travel Histroy controller called");
+        const response = {
+            status: 200,
+            message: {}
+        }
         const travel_history_id = req.params.travel_history_id;
         if(!helper_module.isValidId(travel_history_id, res)) return;
         Travel.findById(travel_history_id).exec((err, travelHistory)=>helper_module.checkAndSendResponse(err, travelHistory,response,res));
     }
 
-    const deleteOne = function(req, res){
-        console.log("DeleteOne travel Histroy controller called");
-        const travel_history_id = req.params.travel_history_id;
-
-        if(!helper_module.isValidId(travel_history_id,res)) return;
-
-        Travel.findByIdAndDelete(travel_history_id).exec((err, deletedHistory)=>helper_module.checkAndSendResponse(err, deletedHistory,response,res));
+    const _deleteOneHelper = function(res, travel_history_id, err, travelHistory){
+        console.log("_deleteOneHelper travel Histroy controller called");
+        const response = {
+            status: 200,
+            message: {}
+        }
+        if(err || !travelHistory){
+            helper_module.checkAndSendResponse(err,travelHistory,response,res);
+            return;
+        }
+        Travel.findByIdAndDelete(travel_history_id).exec((err, deletedHistory)=>{
+            helper_module.checkAndSendResponse(err, deletedHistory? {"Message":"Successfully deleted"} : false,response,res);
+        });
     }
 
-    const updateOne = async function(req, res){
-        console.log("Update one travel history controller called");
+    const deleteOne = function(req, res){
+        console.log("deleteOne travel Histroy controller called");
         const travel_history_id = req.params.travel_history_id;
         if(!helper_module.isValidId(travel_history_id,res)) return;
-        const isFound = await helper_module.isIdFound(Travel, travel_history_id, res, response);
-        console.log(isFound);
-        if(!isFound) return;
+        Travel.findById(travel_history_id).exec((err, travelHistory)=>_deleteOneHelper(res, travel_history_id, err, travelHistory));
+    }
+
+    const _updateOneHelper = function(res, travel_history_id, updatedTravelInfo, err, travelHistory){
+        console.log("_updateOneHelper travel history controller called");
+        const response = {
+            status: 200,
+            message: {}
+        }
+        if(err || !travelHistory){
+            helper_module.checkAndSendResponse(err, false, response,res);
+            return
+        }
+        const tourist_attractions = travelHistory.tourist_attractions;
+        updatedTravelInfo.tourist_attractions = tourist_attractions;
+        Travel.findByIdAndUpdate(travel_history_id,updatedTravelInfo,{new: true}).exec((err, successfullyUpdated)=>{
+            if(!successfullyUpdated){
+                helper_module.checkAndSendResponse(err, false, response,res);
+                return;
+            }
+            helper_module.checkAndSendResponse(err, successfullyUpdated? {"Message": "Successfully Updated", successfullyUpdated} : false,response,res)
+        });
+    }
+
+    const updateOne =  function(req, res){
+        console.log("Update one travel history controller called");
+        const response = {
+            status: 200,
+            message: {}
+        }
+        const travel_history_id = req.params.travel_history_id;
+        if(!helper_module.isValidId(travel_history_id,res)) return;
         else{
-            let tourist_attractions = [];
             if(!helper_module.isValidData(req, res, response)) return;
             else{
-                const country = req.body.country;
-                const population = parseInt(req.body.population, 10);
-                Travel.findById(travel_history_id).exec((err, travelHistory)=>{
-                    tourist_attractions = travelHistory.tourist_attractions;
-                    })
-                const updatedTravelInfo = {
-                    country: country,
-                    population: population,
-                    tourist_attractions: tourist_attractions
-                }
-                Travel.findByIdAndUpdate(travel_history_id,updatedTravelInfo).exec((err, successfullyUpdatedResponse)=>helper_module.checkAndSendResponse(err, successfullyUpdatedResponse,response,res));
+                const updatedTravelInfo = {};
+                updatedTravelInfo.country = req.body.country;
+                updatedTravelInfo.population = parseInt(req.body.population, 10);
+                Travel.findById(travel_history_id).exec((err, travelHistory)=>_updateOneHelper(res, travel_history_id, updatedTravelInfo, err, travelHistory));
             }
         }
     }
+
     return {
-        createNewTravelHistory : createNewTravelHistory,
-        getAll: getAll,
-        getOne : getOne,
-        deleteOne: deleteOne,
-        updateOne: updateOne
+        createNewTravelHistory,
+        getAll,
+        getOne,
+        deleteOne,
+        updateOne
     }
 })();
 

@@ -17,7 +17,7 @@
            response.message = {message: "There is no data for the provided Id"}
        }
    
-       res.status(response.status).json(response.message)
+       res.status(response.status).json(response.message);
    }
    const isValidId = function(travel_history_id, res){
        console.log("isValidId helper method called");
@@ -51,24 +51,11 @@
             return false;
         } else return true;
    };
-   const isIdFound = async function(Travel, travel_history_id, res, response){
-       await Travel.findById(travel_history_id).exec((err, travelHistroy)=>{
-           if(!travelHistroy){
-               response.status = 404,
-               response.message = {message: "Travel History ID not found!"}
-           }
-       });
-       if(response.status!=200){
-           res.status(response.status).json(response.message);
-           return false;
-       }
-       return true;
-   }
+   
    return {
        checkAndSendResponse : checkAndSendResponse,
        isValidId: isValidId,
        isValidData : isValidData,
-       isIdFound: isIdFound
    }
  })();
 

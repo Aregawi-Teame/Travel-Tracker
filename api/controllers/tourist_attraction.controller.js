@@ -27,14 +27,12 @@ const tourist_attractionController = (function(){
         const travel_history_id = req.params.travel_history_id;
         if(!helper_module.isValidId(travel_history_id, res)) return;
         if(!helper_module.isValidData(req, res, response)) return;
-        const name = req.body.name;
-        const description = req.body.description;
-        const city = req.body.city;
-        const tourist_attractions ={
-            name: name,
-            description: description,
-            city: city
-        }
+
+        const tourist_attractions = {};
+        tourist_attractions.name = req.body.name;
+        tourist_attractions.description = req.body.description;
+        tourist_attractions.city = req.body.city;
+        
         Travel.findByIdAndUpdate(travel_history_id,{$push:{tourist_attractions:tourist_attractions}},{new: true},(err, updetedTravelHistory)=>{
             if(!updetedTravelHistory){
                 helper_module.checkAndSendResponse(err, false, response,res)
@@ -131,15 +129,12 @@ const tourist_attractionController = (function(){
             message: {}
         }
         if(!helper_module.isValidData(req, res, response)) return;
-        const name = req.body.name;
-        const description = req.body.description;
-        const city = req.body.city;
-        const tourist_attractions ={
-            name: name,
-            description: description,
-            city: city,
-            _id: ObjectId(tourist_id)
-        }
+        
+        const tourist_attractions = {};
+        tourist_attractions.name = req.body.name;
+        tourist_attractions.description = req.body.description;
+        tourist_attractions.city = req.body.city;
+        
         Travel.findById(travel_history_id).exec((err, travelHistory)=>_updateTouristAttractionHelper(res,travel_history_id,err, travelHistory, tourist_id, tourist_attractions));
     }
     return{

@@ -1,4 +1,5 @@
  const mongoose = require("mongoose");
+ const propertiesRule = require("./proporties.rule");
  const helper_module = (()=>{
     const checkAndSendResponse = function(err, succeededOperationResponse,response, res){
         console.log("Check and Send Response helper method called")
@@ -29,23 +30,22 @@
        }
    }
 
+   const _isValidDataHelper = function(key, value,response){
+    if(!propertiesRule.properties.get(key).test(value)){
+        response.status = 400;
+        response.message = {message: propertiesRule.message.get(key)}
+    }
+   }
    const isValidData = function(req, res, response){
         console.log("isValidData helper method called");
-        const country = req.body.country;
-        const population = parseInt(req.body.population, 10);
-        if(!population || !country){
-            response.status = 400;
-            response.message = {message: "Please provide country and number of population"}
+        const bodyKeys = Object.keys(req.body);
+        const bodyValues = Object.values(req.body);
+        const formData = new Map();
+
+        for(let i =0; i<bodyKeys.length;i++){
+            formData.set(bodyKeys[i], bodyValues[i]);
         }
-        else if(country.length<=1){
-            console.log(country.length, !country);
-            response.status = 400;
-            response.message = {message: "Please provide a valid Country name"}
-        }
-        else if(isNaN(population) || population<1){
-            response.status = 400;
-            response.message = {message: "Please provide a valid number of population"}
-        }
+        formData.forEach((value, key, m)=>_isValidDataHelper(key, value, response))
         if(response.status!=200){
             res.status(response.status).json(response.message);
             return false;

@@ -22,7 +22,7 @@ const travelHistoryController = (()=>{
             Travel.create(newTravel, (err, savedTravel)=>helper_module.checkAndSendResponse(err, savedTravel ? {"Message": "Successfully Saved", savedTravel}: false,response, res));
         };
     };
-    
+
     const getAll = function(req, res){
         console.log("Get All Travel History controller called");
         const response = {

@@ -17,7 +17,7 @@ const tourist_attractionController = (function(){
         }
         return true;
     }
-    
+
     const addTouristAttraction =  function(req, res){
         console.log("addTouristAttraction tourist_attraction controller called");
         const response = {
@@ -26,17 +26,10 @@ const tourist_attractionController = (function(){
         }
         const travel_history_id = req.params.travel_history_id;
         if(!helper_module.isValidId(travel_history_id, res)) return;
+        if(!helper_module.isValidData(req, res, response)) return;
         const name = req.body.name;
         const description = req.body.description;
         const city = req.body.city;
-        if(!name || !description || !city){
-            response.status = 400;
-            response.message = {message: "Please provide all information"}
-        }
-        if(response.status!=200){
-            res.status(response.status).json(response.message);
-            return;
-        }
         const tourist_attractions ={
             name: name,
             description: description,
@@ -137,17 +130,10 @@ const tourist_attractionController = (function(){
             status: 200,
             message: {}
         }
+        if(!helper_module.isValidData(req, res, response)) return;
         const name = req.body.name;
         const description = req.body.description;
         const city = req.body.city;
-        if(!name || !description || !city){
-            response.status = 400;
-            response.message = {message: "Please provide all information"}
-        }
-        if(response.status!=200){
-            res.status(response.status).json(response.message);
-            return;
-        }
         const tourist_attractions ={
             name: name,
             description: description,

@@ -11,15 +11,13 @@ const travelHistoryController = (()=>{
             message: {}
         }
         if(!helper_module.isValidData(req, res, response)) return;
-        else{
-            
-            const newTravel = {};
-            newTravel.country = req.body.country;
-            newTravel.population = parseInt(req.body.population, 10);
-            newTravel.tourist_attractions =[];
+        
+        const newTravel = {};
+        newTravel.country = req.body.country;
+        newTravel.population = parseInt(req.body.population, 10);
+        newTravel.tourist_attractions =[];
 
-            Travel.create(newTravel, (err, savedTravel)=>helper_module.checkAndSendResponse(err, savedTravel ? {"Message": "Successfully Saved", savedTravel}: false,response, res));
-        };
+        Travel.create(newTravel, (err, savedTravel)=>helper_module.checkAndSendResponse(err, savedTravel ? {"Message": "Successfully Saved", savedTravel}: false,response, res));
     };
 
     const getAll = function(req, res){

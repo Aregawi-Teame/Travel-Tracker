@@ -14,9 +14,9 @@ properties.set("city",rules.get("alphabet"));
 const message = new Map();
 message.set("country", "Please enter valid Country name (only character, space and .) ");
 message.set("population","Please enter valid population number (only number");
-message.set("description", "Please enter valid description")
-message.set("name", "Please enter valid name")
-message.set("city", "Please enter valid city name")
+message.set("description", "Please enter valid description");
+message.set("name", "Please enter valid name");
+message.set("city", "Please enter valid city name");
 
 
 module.exports = {rules, properties, message};

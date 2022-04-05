@@ -10,8 +10,8 @@ const travelHistoryController = (()=>{
             status: 200,
             message: {}
         }
+        if(!helper_module.includesAllRequiredFieldsForTravelHistory(req, res)) return;
         if(!helper_module.isValidData(req, res, response)) return;
-        
         const newTravel = {};
         newTravel.country = req.body.country;
         newTravel.population = parseInt(req.body.population, 10);
@@ -84,52 +84,58 @@ const travelHistoryController = (()=>{
         Travel.findById(travel_history_id).exec((err, travelHistory)=>_deleteOneHelper(res, travel_history_id, err, travelHistory));
     }
 
-    const _updateOneHelper = function(res, travel_history_id, updatedTravelInfo, err, travelHistory){
+    const _updateOne = function(req, res, updateOneCallback){
         console.log("_updateOneHelper travel history controller called");
         const response = {
             status: 200,
             message: {}
         }
-        if(err || !travelHistory){
-            helper_module.checkAndSendResponse(err, false, response,res);
-            return
-        }
-        const tourist_attractions = travelHistory.tourist_attractions;
-        updatedTravelInfo.tourist_attractions = tourist_attractions;
-        Travel.findByIdAndUpdate(travel_history_id,updatedTravelInfo,{new: true}).exec((err, successfullyUpdated)=>{
-            if(!successfullyUpdated){
-                helper_module.checkAndSendResponse(err, false, response,res);
+        const travel_history_id = req.params.travel_history_id;
+        if(!helper_module.isValidId(travel_history_id, res)) return;
+        if(!helper_module.isValidData(req, res, response)) return;
+        Travel.findById(travel_history_id).exec(function(err, travelHistory){
+            if(err || !travelHistory) {
+                helper_module.checkAndSendResponse(err, travelHistory,response,res);
                 return;
             }
-            helper_module.checkAndSendResponse(err, successfullyUpdated? {"Message": "Successfully Updated", successfullyUpdated} : false,response,res)
-        });
+            updateOneCallback(req, res, travelHistory, response);
+        })
     }
 
-    const updateOne =  function(req, res){
-        console.log("Update one travel history controller called");
-        const response = {
-            status: 200,
-            message: {}
-        }
-        const travel_history_id = req.params.travel_history_id;
-        if(!helper_module.isValidId(travel_history_id,res)) return;
-        else{
-            if(!helper_module.isValidData(req, res, response)) return;
-            else{
-                const updatedTravelInfo = {};
-                updatedTravelInfo.country = req.body.country;
-                updatedTravelInfo.population = parseInt(req.body.population, 10);
-                Travel.findById(travel_history_id).exec((err, travelHistory)=>_updateOneHelper(res, travel_history_id, updatedTravelInfo, err, travelHistory));
-            }
-        }
+    const _replaceOneTravelHistory = function(req,res,travelHistory, response){
+        console.log("_replaceOneTravelHistory travel history controller called");
+        if(!helper_module.includesAllRequiredFieldsForTravelHistory(req, res))return;
+        travelHistory.country = req.body.country;
+        travelHistory.population = parseInt(req.body.population,10);
+        travelHistory.tourist_attractions = [];
+        travelHistory.save((err, successfullyUpdated)=>helper_module.checkAndSendResponse(err, successfullyUpdated? {"Message": "Successfully Updated", successfullyUpdated} : false,response,res));
     }
+    const replaceOneTravelHistory =  function(req, res){
+        console.log("replaceOneTravelHistor  travel history controller called");
+        _updateOne(req, res, _replaceOneTravelHistory);
+    }
+
+
+    const _partialUpdate = function(req, res, travelHistory, response){
+        console.log("_partialUpdate travel history controller called");
+        travelHistory.country = req.body.country || travelHistory.country;
+        travelHistory.population = req.body.population || travelHistory.population;
+        travelHistory.tourist_attractions = req.body.tourist_attractions || travelHistory.tourist_attractions;
+        travelHistory.save((err, successfullyUpdated)=>helper_module.checkAndSendResponse(err, successfullyUpdated? {"Message": "Successfully Updated", successfullyUpdated}:false,response,res));
+    }
+    const partialUpdate = function(req, res){
+        console.log("partialUpdate travel history controller called");
+        _updateOne(req, res, _partialUpdate);
+    }
+
 
     return {
         createNewTravelHistory,
         getAll,
         getOne,
         deleteOne,
-        updateOne
+        replaceOneTravelHistory,
+        partialUpdate
     }
 })();
 

@@ -6,16 +6,17 @@
        if(err){
            console.log("Error "+ err);
            response.status = 500;
-           response.message = {message: "Internal Server Error"};
-       }
-       else if(succeededOperationResponse){
-               console.log("Responded  Successfuly")
-               response.status = 200,
-               response.message = succeededOperationResponse
-       } else{
-           console.log("Data is null");
-           response.status = 404;
-           response.message = {message: "There is no data for the provided Id"}
+           response.message = {message: "Internal Server Error", err};
+       }else{
+            if(succeededOperationResponse){
+                console.log("Responded  Successfuly")
+                response.status = 200,
+                response.message = succeededOperationResponse
+            } else{
+                console.log("Data is null");
+                response.status = 404;
+                response.message = {message: "There is no data for the provided Id"}
+            }
        }
    
        res.status(response.status).json(response.message);
@@ -30,10 +31,39 @@
        }
    }
 
+   const includesAllRequiredFields= function(requiredFields,req, res){
+       console.log("includesAllRequiredFields helper module called")
+       const bodyKeys = Object.keys(req.body);
+       for(let i =0; i<requiredFields.length;i++){
+           if(bodyKeys.indexOf(requiredFields[i])<0){
+               res.status(400).json({"Error":`${requiredFields[i]} is required`});
+               return false;
+           }
+       }
+
+       return true;
+   }
+
+   const includesAllRequiredFieldsForTravelHistory = function(req, res){
+       console.log("includesAllRequiredFieldsForTravelHistory helper module called")
+        const requiredFields = ["country", "population"];
+        if(!includesAllRequiredFields(requiredFields,req, res)) return false;
+        else return true;
+   }
+
+   const includesAllRequiredFieldsForTouristAttraction = function(req, res){
+    console.log("includesAllRequiredFieldsForTouristAttraction helper module called");
+    const requiredFields = ["name", "description","city"];
+    if(!includesAllRequiredFields(requiredFields,req,res)) return false;
+    else return true;
+   }
+
    const _isValidDataHelper = function(key, value,response){
-    if(!propertiesRule.properties.get(key).test(value)){
-        response.status = 400;
-        response.message = {message: propertiesRule.message.get(key)}
+        if(propertiesRule.properties.get(key)){
+            if(!propertiesRule.properties.get(key).test(value)){
+                response.status = 400;
+                response.message = {message: propertiesRule.message.get(key)}
+            }
     }
    }
    const isValidData = function(req, res, response){
@@ -56,6 +86,8 @@
        checkAndSendResponse : checkAndSendResponse,
        isValidId: isValidId,
        isValidData : isValidData,
+       includesAllRequiredFieldsForTravelHistory,
+       includesAllRequiredFieldsForTouristAttraction
    }
  })();
 

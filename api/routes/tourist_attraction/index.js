@@ -9,6 +9,7 @@ router.route(`/${process.env.TRAVEL_HISTORIES}/:travel_history_id/${process.env.
 router.route(`/${process.env.TRAVEL_HISTORIES}/:travel_history_id/${process.env.TOURISTS}/:tourist_id`)
     .get(tourist_attractionController.getOne)
     .delete(tourist_attractionController.deleteTouristAttraction)
-    .put(tourist_attractionController.updateTouristAttraction)
+    .put(tourist_attractionController.replaceOneTouristAttraction)
+    .patch(tourist_attractionController.updateOneTouristAttractionPartialy)
 
 module.exports = router;

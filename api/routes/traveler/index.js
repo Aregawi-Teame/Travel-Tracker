@@ -8,6 +8,7 @@ router.route(`/${process.env.TRAVEL_HISTORIES}`)
     .post(travel_historyController.createNewTravelHistory)
 router.route(`/${process.env.TRAVEL_HISTORIES}/:travel_history_id`)
     .get(travel_historyController.getOne)
-    .put(travel_historyController.updateOne)
+    .put(travel_historyController.replaceOneTravelHistory)
+    .patch(travel_historyController.partialUpdate)
     .delete(travel_historyController.deleteOne)
 module.exports = router;

@@ -22,7 +22,7 @@ app.use("/api", travelerRoutes);
 app.use(express.static(path.join(__dirname,"public")));
 
 app.use((req,res)=>{
-    res.status(404).redirect(303,"/html/404.html");
+    res.status(process.env.HTTP_NOT_FOUND).redirect(process.env.HTTP_SEE_OTHER,"/html/404.html");
 })
 
 const server = app.listen(process.env.PORT, process.env.HOST, ()=>{

@@ -21,7 +21,7 @@ const tourist_attractionController = (function(){
     const addTouristAttraction =  function(req, res){
         console.log("addTouristAttraction tourist_attraction controller called");
         const response = {
-            status: 200,
+            status: process.env.HTTP_OK,
             message: {}
         }
         const travel_history_id = req.params.travel_history_id;
@@ -50,7 +50,7 @@ const tourist_attractionController = (function(){
     const getAll =  function(req, res){
         console.log("getAll tourist_attraction controller called");
         const response = {
-            status: 200,
+            status: process.env.HTTP_OK,
             message: {}
         }
         const travel_history_id = req.params.travel_history_id;
@@ -63,7 +63,7 @@ const tourist_attractionController = (function(){
     const _getOneHelper =function(res, err, travelHistory, tourist_id){
         console.log("_getOneHelper tourist_attraction controller called");
         const response = {
-            status: 200,
+            status: process.env.HTTP_OK,
             message: {}
         }
         if(!_foundTravelHistoryAndTouristAttraction(err, travelHistory, response,res,tourist_id)) return;
@@ -84,7 +84,7 @@ const tourist_attractionController = (function(){
     const _deleteTouristAttractionHelper = function(res, travel_history_id,err, travelHistory, tourist_id){
         console.log("_deleteTouristAttractionHelper tourist_attraction controller called");
         const response = {
-            status: 200,
+            status: process.env.HTTP_OK,
             message: {}
         }
         if(!_foundTravelHistoryAndTouristAttraction(err, travelHistory, response,res,tourist_id)) return;
@@ -108,7 +108,7 @@ const tourist_attractionController = (function(){
         if(!helper_module.isValidId(travel_history_id, res)) return;
         if(!helper_module.isValidId(tourist_id, res)) return;
         const response = {
-            status: 200,
+            status: process.env.HTTP_OK,
             message: {}
         }
         if(!helper_module.isValidData(req, res, response)) return;

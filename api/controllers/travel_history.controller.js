@@ -7,7 +7,7 @@ const travelHistoryController = (()=>{
     const createNewTravelHistory = function(req, res){
         console.log("Create new travel history controller called")
         const response = {
-            status: 200,
+            status: process.env.HTTP_OK,
             message: {}
         }
         if(!helper_module.includesAllRequiredFieldsForTravelHistory(req, res)) return;
@@ -23,7 +23,7 @@ const travelHistoryController = (()=>{
     const getAll = function(req, res){
         console.log("Get All Travel History controller called");
         const response = {
-            status: 200,
+            status: process.env.HTTP_OK,
             message: {}
         }
         let offset = 0;
@@ -36,15 +36,15 @@ const travelHistoryController = (()=>{
             offset = req.query.offset ? parseInt(req.query.offset,10) : offset;
             count  = req.query.count ? parseInt(req.query.count, 10) : count;
             if(isNaN(offset) || offset<0 || offset >maxOffset){
-                response.status = 400,
+                response.status = process.env.HTTP_BAD_REQUEST,
                 response.message = {message: `Offset must be a digit and between 0 and ${maxOffset}`};
             }
             else if(isNaN(count) || count<1 || count>maxCount){
-                response.status = 400,
+                response.status = process.env.HTTP_BAD_REQUEST,
                 response.message = {message: `Offset must be a digit and between 1 and ${maxCount}`};
             }
         }
-        if(response.status!=200){
+        if(response.status!=process.env.HTTP_OK){
             res.status(response.status).json(response.message);
             return;
         };
@@ -54,7 +54,7 @@ const travelHistoryController = (()=>{
     const getOne = function(req, res){
         console.log("getOne travel Histroy controller called");
         const response = {
-            status: 200,
+            status: process.env.HTTP_OK,
             message: {}
         }
         const travel_history_id = req.params.travel_history_id;
@@ -65,7 +65,7 @@ const travelHistoryController = (()=>{
     const _deleteOneHelper = function(res, travel_history_id, err, travelHistory){
         console.log("_deleteOneHelper travel Histroy controller called");
         const response = {
-            status: 200,
+            status: process.env.HTTP_OK,
             message: {}
         }
         if(err || !travelHistory){
@@ -87,7 +87,7 @@ const travelHistoryController = (()=>{
     const _updateOne = function(req, res, updateOneCallback){
         console.log("_updateOneHelper travel history controller called");
         const response = {
-            status: 200,
+            status: process.env.HTTP_OK,
             message: {}
         }
         const travel_history_id = req.params.travel_history_id;

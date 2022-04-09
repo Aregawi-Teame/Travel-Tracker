@@ -5,16 +5,16 @@
         console.log("Check and Send Response helper method called")
        if(err){
            console.log("Error "+ err);
-           response.status = 500;
+           response.status = process.env.HTTP_INTERNAL_SERVER_ERROR;
            response.message = {message: "Internal Server Error", err};
        }else{
             if(succeededOperationResponse){
                 console.log("Responded  Successfuly")
-                response.status = 200,
+                response.status = process.env.HTTP_OK,
                 response.message = succeededOperationResponse
             } else{
                 console.log("Data is null");
-                response.status = 404;
+                response.status = process.env.HTTP_NOT_FOUND;
                 response.message = {message: "There is no data for the provided Id"}
             }
        }
@@ -36,7 +36,7 @@
        const bodyKeys = Object.keys(req.body);
        for(let i =0; i<requiredFields.length;i++){
            if(bodyKeys.indexOf(requiredFields[i])<0){
-               res.status(400).json({"Error":`${requiredFields[i]} is required`});
+               res.status(process.env.HTTP_BAD_REQUEST).json({"Error":`${requiredFields[i]} is required`});
                return false;
            }
        }
@@ -61,7 +61,7 @@
    const _isValidDataHelper = function(key, value,response){
         if(propertiesRule.properties.get(key)){
             if(!propertiesRule.properties.get(key).test(value)){
-                response.status = 400;
+                response.status = process.env.HTTP_BAD_REQUEST;
                 response.message = {message: propertiesRule.message.get(key)}
             }
     }
@@ -76,7 +76,7 @@
             formData.set(bodyKeys[i], bodyValues[i]);
         }
         formData.forEach((value, key, m)=>_isValidDataHelper(key, value, response))
-        if(response.status!=200){
+        if(response.status!=process.env.HTTP_OK){
             res.status(response.status).json(response.message);
             return false;
         } else return true;

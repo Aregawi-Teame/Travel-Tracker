@@ -16,6 +16,7 @@ import { EditTravelHistroyComponent } from './edit-travel-histroy/edit-travel-hi
 import { TableFilterPipe } from './table-filter.pipe';
 import { EditTouristAttractionComponent } from './edit-tourist-attraction/edit-tourist-attraction.component';
 import { TouristAttractionFilterPipe } from './tourist-attraction-filter.pipe';
+import { ErrorPageComponent } from './error-page/error-page.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { TouristAttractionFilterPipe } from './tourist-attraction-filter.pipe';
     EditTravelHistroyComponent,
     TableFilterPipe,
     EditTouristAttractionComponent,
-    TouristAttractionFilterPipe
+    TouristAttractionFilterPipe,
+    ErrorPageComponent
   ],
   imports: [
     BrowserModule,
@@ -64,6 +66,10 @@ import { TouristAttractionFilterPipe } from './tourist-attraction-filter.pipe';
       {
         path:"edit/:travel_history_id/tourists/:tourist_id",
         component:EditTouristAttractionComponent
+      },
+      {
+        path:"**",
+        component: ErrorPageComponent
       }
     ])
   ],

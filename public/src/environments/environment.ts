@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  API_BASE_URL: "This is the base url prefix for backend"
+  API_BASE_URL: "This is the base url prefix for backend",
+  TRAVEL_HISTORIES: "This is prefix for all sub api url requests",
+  TOURISTS: "This is sub prefix for all tourist attraction api"
 };
 
 /*

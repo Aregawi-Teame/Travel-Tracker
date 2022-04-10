@@ -1,0 +1,23 @@
+<form #editTouristAttractionForm="ngForm" (ngSubmit)="editTouristAttraction(editTouristAttractionForm)">
+    <div *ngIf="success" class="alert alert-success alert-dismissible fade show mt-2">
+        <strong>Success!</strong> Updated successfully.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div *ngIf="error" class="alert alert-danger alert-dismissible fade show mt-2">
+        <strong>Error!</strong> {{errorMessage}}.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div class="form-group col-md-6 m-2">
+        <label for="name" class="text-muted">Attraction Name:</label>
+        <input class="form-control" id="name" name="name" type="text" placeholder="Enter name" ngModel>
+    </div>
+    <div class="form-group col-md-6 m-2">
+        <label class="text-muted" for="city">City:</label>
+        <input class="form-control" name="city" type="text" placeholder="Enter city" required ngModel>
+    </div>
+    <div class="form-group col-md-6 m-2">
+        <label for="description" class="text-muted">Description: </label>
+        <textarea name="description" id="description" class="form-control" placeholder="Enter description" ngModel></textarea>
+    </div>
+    <button class="btn btn-primary m-2">Update</button>| <a routerLink="/view/{{travel_history_id}}" class="btn btn-secondary m-2">Cancel</a>
+</form>

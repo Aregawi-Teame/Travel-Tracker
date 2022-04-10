@@ -27,7 +27,7 @@ const travelHistoryController = (()=>{
             message: {}
         }
         let offset = 0;
-        let count = 5;
+        let count = 6;
         const maxCount = 10;
         // Travel.find().exec()
         const maxOffset =  10000

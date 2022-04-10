@@ -1,0 +1,29 @@
+<ul>
+    <input type="text" class="form-control m-2" placeholder="Search using country" [(ngModel)]="input">
+    <div *ngIf="success" class="alert alert-success alert-dismissible fade show mt-2">
+        <strong>Success!</strong> Deleted successfully.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div *ngIf="error" class="alert alert-danger alert-dismissible fade show mt-2">
+        <strong>Error!</strong> {{errorMessage}}.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <table class="table table-striped text-center">
+        <thead>
+            <th>#</th>
+            <th>Country</th>
+            <th>Population</th>
+            <th colspan="3">Options</th>
+        </thead>
+        <tbody>
+            <tr *ngFor="let travel of travels | tableFilter: input; let i=index;">
+                <td>{{i+1}}</td>
+                <td>{{travel.country}}</td>
+                <td>{{travel.population}}</td>
+                <td><a class="btn  btn-outline-primary" routerLink="/edit/{{travel._id}}">Edit</a></td>
+                <td><a class="btn  btn-outline-secondary" routerLink="/view/{{travel._id}}">View</a></td>
+                <td><a (click)="onDelete(travel._id)" class="btn  btn-outline-danger">Delete</a></td>
+            </tr>
+        </tbody>
+    </table>
+</ul>

@@ -1,0 +1,20 @@
+<form #createTravelHistoryForm="ngForm" (ngSubmit)="createTravelHistroy(createTravelHistroyForm)">
+    <div *ngIf="success" class="alert alert-success alert-dismissible fade show mt-2">
+        <strong>Success!</strong> Your Travel History has been saved successfully.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div *ngIf="error" class="alert alert-danger alert-dismissible fade show mt-2">
+        <strong>Error!</strong> {{errorMessage}}.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div class="form-group col-md-6">
+        <label class="text-muted" for="country">Country:</label>
+            <input name="country" id="country" class="form-control" type="text" placeholder="Enter country" ngModel>
+    </div>
+    <div class="form-group col-md-6">
+        <label class="form-label text-muted" for="population">Population:</label>
+            <input name="population" id="population" class="form-control" type="number" placeholder="Enter population" ngModel>
+    </div>
+    <button class="btn btn-primary m-2">Create</button>
+</form>
+<!-- <p>It works!</p> -->

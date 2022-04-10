@@ -31,6 +31,7 @@ export class AddTouristAttractionComponent implements OnInit {
         console.log(result);
         this.success = true;
         this.error = false;
+        this.addTouristAttractionForm.reset();
       },
       error:err=>{
         console.log(err);

@@ -15,6 +15,7 @@ import { AddTouristAttractionComponent } from './add-tourist-attraction/add-tour
 import { EditTravelHistroyComponent } from './edit-travel-histroy/edit-travel-histroy.component';
 import { TableFilterPipe } from './table-filter.pipe';
 import { EditTouristAttractionComponent } from './edit-tourist-attraction/edit-tourist-attraction.component';
+import { TouristAttractionFilterPipe } from './tourist-attraction-filter.pipe';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { EditTouristAttractionComponent } from './edit-tourist-attraction/edit-t
     AddTouristAttractionComponent,
     EditTravelHistroyComponent,
     TableFilterPipe,
-    EditTouristAttractionComponent
+    EditTouristAttractionComponent,
+    TouristAttractionFilterPipe
   ],
   imports: [
     BrowserModule,

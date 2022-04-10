@@ -11,7 +11,7 @@ import { Travel } from '../travels/travels.component';
 })
 export class ViewTravelComponent implements OnInit {
   travel!:Travel;
-
+  userInput!:string;
  
 
   constructor(private routes:ActivatedRoute,private touristAttractionData:TouristAttractionDataService, private travelHistroyData:TravelsDataService) { 

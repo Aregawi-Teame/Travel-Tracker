@@ -13,8 +13,9 @@
     </div>
   <hr>
   <H1>Tourist Attraction</H1>
-    <section *ngFor="let tourist_attraction of travel.tourist_attractions">
-        <h3>{{tourist_attraction.name}} - {{tourist_attraction.city}}</h3>
+  <input class="form-control m-2" type="text" placeholder="Search using tourist attraction or city name" [(ngModel)]="userInput">
+    <section *ngFor="let tourist_attraction of travel.tourist_attractions | touristAttractionFilter : userInput">
+        <h3>{{tourist_attraction.name}} - City: {{tourist_attraction.city}}</h3>
         <article>
             <p>{{tourist_attraction.description}}</p>
             <a routerLink="/edit/{{travel._id}}/tourists/{{tourist_attraction._id}}" class="btn  btn-outline-info mb-4">Edit Tourist Attraction</a> |

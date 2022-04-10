@@ -19,8 +19,6 @@ export class CreateTravelHistoryComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    setTimeout(() =>{this.createTravelHistroyForm.setValue({country:"",population:""})
-    }, 0);
   }
   createTravelHistroy(createTravelHistoryForm:NgForm){
     console.log("createTraveHistroy controller called");
@@ -29,7 +27,7 @@ export class CreateTravelHistoryComponent implements OnInit {
         console.log(result);
         this.success = true;
         this.error = false;
-        this.ngOnInit();
+        this.createTravelHistroyForm.reset()
       },
       error:err=>{
         console.log(err);

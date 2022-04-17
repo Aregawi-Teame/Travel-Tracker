@@ -158,7 +158,10 @@ const tourist_attractionController = (function(){
         response.message.tourist_attractions.id(tourist_id).name = req.body.name;
         response.message.tourist_attractions.id(tourist_id).description = req.body.description;
         response.message.tourist_attractions.id(tourist_id).city = req.body.city;
-        response.message.save((err, updatedTravelHistroy)=>helper_module.checkAndSendResponse(err, updatedTravelHistroy.tourist_attractions.id(tourist_id),response,res))
+        response.message.save()
+            .then((updatedTravelHistroy)=>helper_module.handleOnUpdateResponse(updatedTravelHistroy.tourist_attractions.id(tourist_id), response))
+            .catch((err)=>helper_module.errorHandler(err))
+            .finally(()=>helper_module.sendResponse(res, response));
         
     
     }
@@ -172,7 +175,10 @@ const tourist_attractionController = (function(){
         response.message.tourist_attractions.id(tourist_id).name = req.body.name || response.message.tourist_attractions.id(tourist_id).name;
         response.message.tourist_attractions.id(tourist_id).description = req.body.description || response.message.tourist_attractions.id(tourist_id).description;
         response.message.tourist_attractions.id(tourist_id).city = req.body.city || response.message.tourist_attractions.id(tourist_id).city;
-        response.message.save((err, updatedTravelHistroy)=>helper_module.checkAndSendResponse(err, updatedTravelHistroy.tourist_attractions.id(tourist_id),response,res))
+        response.message.save()
+            .then((updatedTravelHistroy)=>helper_module.handleOnUpdateResponse(updatedTravelHistroy.tourist_attractions.id(tourist_id), response))
+            .catch((err)=>helper_module.errorHandler(err))
+            .finally(()=>helper_module.sendResponse(res, response));
     }
     const updateOneTouristAttractionPartialy = function(req, res){
         console.log("updateOneTouristAttractionPartialy tourist attraction controller");

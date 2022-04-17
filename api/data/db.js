@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 require("../models/travel_history.model");
+require("../models/user.model");
 mongoose.connect(process.env.DB_URL, {useNewUrlParser: true});
 
 mongoose.connection.on("connected",function(){

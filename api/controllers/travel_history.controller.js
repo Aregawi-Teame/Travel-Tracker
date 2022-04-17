@@ -17,7 +17,10 @@ const travelHistoryController = (()=>{
         newTravel.population = parseInt(req.body.population, 10);
         newTravel.tourist_attractions =[];
 
-        Travel.create(newTravel, (err, savedTravel)=>helper_module.checkAndSendResponse(err, savedTravel ? {"Message": "Successfully Saved", savedTravel}: false,response, res));
+        Travel.create(newTravel)
+            .then((createdTravelHistory)=>helper_module.onSuccessDataCreation(createdTravelHistory, response))
+            .catch((err)=>helper_module.errorHandler(err, response))
+            .finally(()=>helper_module.sendResponse(res, response));
     };
 
     const getAll = function(req, res){
@@ -31,7 +34,6 @@ const travelHistoryController = (()=>{
         const maxCount = 10;
         // Travel.find().exec()
         const maxOffset =  10000
-        console.log("Max: "+ maxOffset);
         if(req.query){
             offset = req.query.offset ? parseInt(req.query.offset,10) : offset;
             count  = req.query.count ? parseInt(req.query.count, 10) : count;
@@ -45,10 +47,13 @@ const travelHistoryController = (()=>{
             }
         }
         if(response.status!=process.env.HTTP_OK){
-            res.status(response.status).json(response.message);
+            helper_module.sendResponse(res, response);
             return;
         };
-        Travel.find().skip(offset).limit(count+offset).exec((err, travelHistories)=>helper_module.checkAndSendResponse(err, travelHistories,response,res));
+        Travel.find().skip(offset).limit(count+offset).exec()
+            .then((travelHistories)=>helper_module.onSuccessfullyDataReturned(travelHistories,response))
+            .catch((err)=>helper_module.errorHandler(err, response))
+            .finally(()=>helper_module.sendResponse(res, response));
     }
     
     const getOne = function(req, res){
@@ -59,29 +64,36 @@ const travelHistoryController = (()=>{
         }
         const travel_history_id = req.params.travel_history_id;
         if(!helper_module.isValidId(travel_history_id, res)) return;
-        Travel.findById(travel_history_id).exec((err, travelHistory)=>helper_module.checkAndSendResponse(err, travelHistory,response,res));
+        Travel.findById(travel_history_id).exec()
+            .then((travelHistory)=>helper_module.onSuccessfullyDataReturned(travelHistory, response))
+            .catch((err)=>helper_module.errorHandler(err, response))
+            .finally(()=>helper_module.sendResponse(res, response));
     }
 
-    const _deleteOneHelper = function(res, travel_history_id, err, travelHistory){
+    const _deleteOneHelper = function(res, travel_history_id, response){
         console.log("_deleteOneHelper travel Histroy controller called");
-        const response = {
-            status: process.env.HTTP_OK,
-            message: {}
-        }
-        if(err || !travelHistory){
-            helper_module.checkAndSendResponse(err,travelHistory,response,res);
+        if(response.status!=process.env.HTTP_OK){
+            helper_module.sendResponse(res, response);
             return;
         }
-        Travel.findByIdAndDelete(travel_history_id).exec((err, deletedHistory)=>{
-            helper_module.checkAndSendResponse(err, deletedHistory? {"Message":"Successfully deleted"} : false,response,res);
-        });
+        Travel.findByIdAndDelete(travel_history_id).exec()
+            .then((deletedStatus)=>helper_module.handleOnDeleteResponse(deletedStatus,response))
+            .catch((err)=>helper_module.errorHandler(err,response))
+            .finally(()=>helper_module.sendResponse(res, response));
     }
 
     const deleteOne = function(req, res){
         console.log("deleteOne travel Histroy controller called");
+        const response = {
+            status: process.env.HTTP_OK,
+            message: {}
+        }
         const travel_history_id = req.params.travel_history_id;
         if(!helper_module.isValidId(travel_history_id,res)) return;
-        Travel.findById(travel_history_id).exec((err, travelHistory)=>_deleteOneHelper(res, travel_history_id, err, travelHistory));
+        Travel.findById(travel_history_id).exec()
+            .then((travelHistory)=>helper_module.onSuccessfullyDataReturned(travelHistory, response))
+            .catch((err)=>helper_module.errorHandler(err, response))
+            .finally(()=>_deleteOneHelper(res, travel_history_id, response));
     }
 
     const _updateOne = function(req, res, updateOneCallback){
@@ -93,36 +105,49 @@ const travelHistoryController = (()=>{
         const travel_history_id = req.params.travel_history_id;
         if(!helper_module.isValidId(travel_history_id, res)) return;
         if(!helper_module.isValidData(req, res, response)) return;
-        Travel.findById(travel_history_id).exec(function(err, travelHistory){
-            if(err || !travelHistory) {
-                helper_module.checkAndSendResponse(err, travelHistory,response,res);
-                return;
-            }
-            updateOneCallback(req, res, travelHistory, response);
-        })
+        Travel.findById(travel_history_id).exec()
+            .then((travelHistory)=>helper_module.onSuccessfullyDataReturned(travelHistory, response))
+            .catch((err)=>helper_module.errorHandler(err,response))
+            .finally(()=>_checkForErrorAndCallUpdateOneCallback(req, res, response, updateOneCallback));
     }
 
-    const _replaceOneTravelHistory = function(req,res,travelHistory, response){
+    const _checkForErrorAndCallUpdateOneCallback = function(req, res, response, updateOneCallback){
+        if(response.status!=process.env.HTTP_OK){
+            helper_module.sendResponse(res, response);
+            return;
+        }
+        updateOneCallback(req, res, response)
+    }
+
+    const _replaceOneTravelHistory = function(req,res, response){
         console.log("_replaceOneTravelHistory travel history controller called");
         if(!helper_module.includesAllRequiredFieldsForTravelHistory(req, res))return;
-        travelHistory.country = req.body.country;
-        travelHistory.population = parseInt(req.body.population,10);
-        travelHistory.tourist_attractions = [];
-        travelHistory.save((err, successfullyUpdated)=>helper_module.checkAndSendResponse(err, successfullyUpdated? {"Message": "Successfully Updated", successfullyUpdated} : false,response,res));
+        response.message.country = req.body.country;
+        response.message.population = parseInt(req.body.population,10);
+        response.message.tourist_attractions = [];
+        response.message.save()
+            .then((updatedTravelHistory)=>helper_module.handleOnUpdateResponse(updatedTravelHistory, response))
+            .catch((err)=>helper_module.errorHandler(err, response))
+            .finally(()=>helper_module.sendResponse(res, response));
     }
+
     const replaceOneTravelHistory =  function(req, res){
         console.log("replaceOneTravelHistor  travel history controller called");
         _updateOne(req, res, _replaceOneTravelHistory);
     }
 
 
-    const _partialUpdate = function(req, res, travelHistory, response){
+    const _partialUpdate = function(req, res, response){
         console.log("_partialUpdate travel history controller called");
-        travelHistory.country = req.body.country || travelHistory.country;
-        travelHistory.population = req.body.population || travelHistory.population;
-        travelHistory.tourist_attractions = req.body.tourist_attractions || travelHistory.tourist_attractions;
-        travelHistory.save((err, successfullyUpdated)=>helper_module.checkAndSendResponse(err, successfullyUpdated? {"Message": "Successfully Updated", successfullyUpdated}:false,response,res));
+        response.message.country = req.body.country || response.message.country;
+        response.message.population = req.body.population || response.message.population;
+        response.message.tourist_attractions = req.body.tourist_attractions || response.message.tourist_attractions;
+        response.message.save()
+            .then((updatedTravelHistory)=>helper_module.handleOnUpdateResponse(updatedTravelHistory, response))
+            .catch((err)=>helper_module.errorHandler(err, response))
+            .finally(()=>helper_module.sendResponse(res, response));
     }
+    
     const partialUpdate = function(req, res){
         console.log("partialUpdate travel history controller called");
         _updateOne(req, res, _partialUpdate);

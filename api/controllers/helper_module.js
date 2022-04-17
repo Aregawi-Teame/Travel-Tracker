@@ -21,6 +21,48 @@
    
        res.status(response.status).json(response.message);
    }
+   
+   const onSuccessDataCreation = function(createdData, response){
+       console.log("onSuccessDataCreation helper method called")
+       if(!createdData){
+            response.status = process.env.HTTP_INTERNAL_SERVER_ERROR;
+            response.message = {message: "Data is not created please try again"};
+            return;
+       }
+       response.status = process.env.HTTP_CREATED;
+       response.message = createdData;
+   }
+
+   const errorHandler = function(err, response){
+       console.log("erroHandler helper function called");
+       response.status = process.env.HTTP_INTERNAL_SERVER_ERROR;
+       response.message = err;
+   }
+
+   const sendResponse = function(res, response){
+       console.log("sendResponse helper method called")
+       res.status(response.status).json(response.message);
+   }
+   const onSuccessfullyDataReturned = function(data, response){
+       console.log("onSuccessfullyDataReturned helper function called");
+       if(!data){
+            response.status = process.env.HTTP_NOT_FOUND;
+            response.message = {message: "No data found, or provide valid Id"};
+            return;
+       }
+       response.status = process.env.HTTP_OK;
+       response.message = data;
+   }
+   const handleOnDeleteResponse = function(deletedData, response){
+       console.log("handleOnDeleteResponse helper function called")
+       response.status = process.env.HTTP_ACCEPTED;
+       response.message = {message: "Successfully deleted!", deletedData};
+   }
+   const handleOnUpdateResponse = function(updatedData, response){
+       console.log("handleOnUpdateResponse helper function called");
+       response.status = process.env.HTTP_OK;
+       response.message = {message: "Successfully Updated", updatedData};
+   }
    const isValidId = function(travel_history_id, res){
        console.log("isValidId helper method called");
        let isValid = mongoose.isValidObjectId(travel_history_id);
@@ -87,7 +129,13 @@
        isValidId: isValidId,
        isValidData : isValidData,
        includesAllRequiredFieldsForTravelHistory,
-       includesAllRequiredFieldsForTouristAttraction
+       includesAllRequiredFieldsForTouristAttraction,
+       errorHandler,
+       sendResponse,
+       onSuccessDataCreation,
+       onSuccessfullyDataReturned,
+       handleOnDeleteResponse,
+       handleOnUpdateResponse
    }
  })();
 

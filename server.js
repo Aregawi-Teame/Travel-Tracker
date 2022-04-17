@@ -3,8 +3,7 @@ require("./api/data/db");
 const path = require("path");
 const express = require("express");
 
-const tourist_attractionRoutes = require("./api/routes/tourist_attraction");
-const travelerRoutes = require("./api/routes/traveler");
+const routes = require("./api/routes");
 
 const app = express();
 
@@ -21,8 +20,7 @@ app.use("/api", (req, res, next)=>{
     res.header('Access-Control-Allow-Methods' ,'PUT, PATCH, DELETE')
     next();
 })
-app.use("/api", tourist_attractionRoutes);
-app.use("/api", travelerRoutes);
+app.use("/api", routes);
 
 app.use(express.static(path.join(__dirname,"public")));
 

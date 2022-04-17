@@ -5,14 +5,16 @@ const ObjectId = require("mongodb").ObjectId;
 
 const tourist_attractionController = (function(){
 
-    const _foundTravelHistoryAndTouristAttraction = function(err, travelHistory, response,res, tourist_id){
-        if(!travelHistory){
-            helper_module.checkAndSendResponse(err, false, response,res);
+    const _foundTravelHistoryAndTouristAttraction = function(res, response, tourist_id){
+        console.log("_foundTravelHistoryAndTouristAttraction tourist attraction controller called")
+        if(response.status!=process.env.HTTP_OK){
+            helper_module.sendResponse(res, response);
             return false;
         }
-        const touristAttract = travelHistory.tourist_attractions.id(tourist_id);
-        if(!touristAttract){
-            helper_module.checkAndSendResponse(err, false, response,res);
+        const touristAttract = response.message.tourist_attractions.id(tourist_id);
+        helper_module.onSuccessfullyDataReturned(touristAttract,response);
+        if(response.status!=process.env.HTTP_OK){
+            helper_module.sendResponse(res, response);
             return false;
         }
         return true;
@@ -34,17 +36,21 @@ const tourist_attractionController = (function(){
         tourist_attractions.description = req.body.description;
         tourist_attractions.city = req.body.city;
         
-        Travel.findByIdAndUpdate(travel_history_id,{$push:{tourist_attractions:tourist_attractions}},{new: true},(err, updetedTravelHistory)=>{
-            if(!updetedTravelHistory){
-                helper_module.checkAndSendResponse(err, false, response,res)
-                return;
-            } 
+        Travel.findByIdAndUpdate(travel_history_id,{$push:{tourist_attractions:tourist_attractions}},{new: true})
+            .then((updatedData)=>helper_module.handleOnUpdateResponse(updatedData, response))
+            .catch((err)=>helper_module.errorHandler(err, response))
+            .finally(()=>_checkResponseStatusAndSendResponse(res, response));
+    }
 
-            const indexOfLastInsertedTourist_attraction = updetedTravelHistory.tourist_attractions.length-1;
-            console.log("Length "+ indexOfLastInsertedTourist_attraction);
-            helper_module.checkAndSendResponse(err, updetedTravelHistory.tourist_attractions[indexOfLastInsertedTourist_attraction], response,res)
-            
-        });
+    const _checkResponseStatusAndSendResponse = function(res, response){
+        console.log("_checkResponseStatusAndSendResponse tourist attraction controller called");
+        if(response.status!=process.env.HTTP_OK){
+            helper_module.sendResponse(res, response);
+            return;
+        }
+        const indexOfLastInsertedTourist_attraction = response.message.updatedData.tourist_attractions.length-1;
+        helper_module.onSuccessDataCreation(response.message.updatedData.tourist_attractions[indexOfLastInsertedTourist_attraction],response);
+        helper_module.sendResponse(res, response);
     }
 
     const getAll =  function(req, res){
@@ -56,49 +62,61 @@ const tourist_attractionController = (function(){
         const travel_history_id = req.params.travel_history_id;
         if(!helper_module.isValidId(travel_history_id,res)) return;
     
-        Travel.findById(travel_history_id).select("tourist_attractions").exec((err, travelHistroy)=>helper_module.checkAndSendResponse(err,travelHistroy,response,res));
+        Travel.findById(travel_history_id).select("tourist_attractions").exec()
+            .then((touristAttractions)=>helper_module.onSuccessfullyDataReturned(touristAttractions, response))
+            .catch((err)=>helper_module.errorHandler(err, response))
+            .finally(()=>helper_module.sendResponse(res, response));
         
     }
 
-    const _getOneHelper =function(res, err, travelHistory, tourist_id){
+    const _getOneHelper =function(res, response, tourist_id){
         console.log("_getOneHelper tourist_attraction controller called");
-        const response = {
-            status: process.env.HTTP_OK,
-            message: {}
-        }
-        if(!_foundTravelHistoryAndTouristAttraction(err, travelHistory, response,res,tourist_id)) return;
-        helper_module.checkAndSendResponse(err, travelHistory.tourist_attractions.id(tourist_id),response, res)
+        if(!_foundTravelHistoryAndTouristAttraction(res, response,tourist_id)) return;
+        helper_module.sendResponse(res, response);
     }
 
 
     const getOne = function(req, res){
         console.log("getOne tourist_attraction controller called");
+        const response = {
+            status: process.env.HTTP_OK,
+            message: {}
+        }
         const travel_history_id = req.params.travel_history_id;
         const tourist_id = req.params.tourist_id;
         if(!helper_module.isValidId(travel_history_id, res)) return;
         if(!helper_module.isValidId(tourist_id, res)) return;
        
-        Travel.findById(travel_history_id).select("tourist_attractions").exec((err, travelHistory)=>_getOneHelper(res, err, travelHistory, tourist_id));
+        Travel.findById(travel_history_id).select("tourist_attractions").exec()
+            .then((travelHistory)=>helper_module.onSuccessfullyDataReturned(travelHistory,response))
+            .catch((err)=>helper_module.errorHandler(err, response))
+            .finally(()=>_getOneHelper(res, response, tourist_id));
     }
 
-    const _deleteTouristAttractionHelper = function(res, travel_history_id,err, travelHistory, tourist_id){
+    const _deleteTouristAttractionHelper = function(travel_history_id, tourist_id , res, response){
         console.log("_deleteTouristAttractionHelper tourist_attraction controller called");
-        const response = {
-            status: process.env.HTTP_OK,
-            message: {}
-        }
-        if(!_foundTravelHistoryAndTouristAttraction(err, travelHistory, response,res,tourist_id)) return;
-        Travel.findOneAndUpdate(({_id: ObjectId(travel_history_id)}),{$pull: {tourist_attractions:{_id: ObjectId(tourist_id)}}},{new:true},(err, result)=>helper_module.checkAndSendResponse(err,{"Message":"Successfully deleted"},response,res));
+        if(!_foundTravelHistoryAndTouristAttraction(res,response,tourist_id)) return;
+        Travel.findOneAndUpdate(({_id: ObjectId(travel_history_id)}),{$pull: {tourist_attractions:{_id: ObjectId(tourist_id)}}},{new:true})
+            .then((deletedData)=>helper_module.handleOnDeleteResponse({},response))
+            .catch((err)=>helper_module.errorHandler(err, response))
+            .finally(()=>helper_module.sendResponse(res, response));
     }
 
     const deleteTouristAttraction = async function(req,res){
         console.log("deleteTouristAttraction tourist_attraction controller called");
+        const response = {
+            status: process.env.HTTP_OK,
+            message: {}
+        }
         const travel_history_id = req.params.travel_history_id;
         const tourist_id = req.params.tourist_id;
         if(!helper_module.isValidId(travel_history_id, res)) return;
         if(!helper_module.isValidId(tourist_id,res)) return;
 
-        Travel.findById(travel_history_id).exec((err, travelHistory)=>_deleteTouristAttractionHelper(res, travel_history_id, err, travelHistory, tourist_id));
+        Travel.findById(travel_history_id).exec()
+            .then((travelHistory)=>helper_module.onSuccessfullyDataReturned(travelHistory,response))
+            .catch((err)=>helper_module.errorHandler(err, response))
+            .finally(()=>_deleteTouristAttractionHelper(travel_history_id,tourist_id,res, response));
     }
 
     const _updateOne = function(req, res, updateOneTouristAttractionCallback){
@@ -112,23 +130,35 @@ const tourist_attractionController = (function(){
             message: {}
         }
         if(!helper_module.isValidData(req, res, response)) return;
-        Travel.findById(travel_history_id).exec(function(err, travelHistory){
-            if(err || !travelHistory || !travelHistory.tourist_attractions.id(tourist_id)){
-                helper_module.checkAndSendResponse(err, false,response,res);
-                return;
-            }
-            updateOneTouristAttractionCallback(req, res, travelHistory,tourist_id,response);
-        })
+        Travel.findById(travel_history_id).exec()
+            .then((travelHistory)=>helper_module.onSuccessfullyDataReturned(travelHistory,response))
+            .catch((err)=>helper_module.errorHandler(err, response))
+            .finally(()=>_checkForErrorAndCallUpdateOneTouristAttractionCallback(req, res, response,tourist_id, updateOneTouristAttractionCallback));
     }
 
-    const _replaceOneTouristAttraction = function(req, res, travelHistory,tourist_id, response){
+    const _checkForErrorAndCallUpdateOneTouristAttractionCallback = function(req, res, response,tourist_id, updateOneTouristAttractionCallback){
+         console.log("_checkForErrorAndCallUpdateOneTouristAttractionCallback tourist attraction controller called");
+         if(response.status!=process.env.HTTP_OK)  {
+             helper_module.sendResponse(res, response);
+             return;
+         }
+         //helper_module.onSuccessfullyDataReturned(response.message.tourist_attractions.id(tourist_id),response); 
+         if(!response.message.tourist_attractions.id(tourist_id)){
+            response.status = process.env.HTTP_NOT_FOUND;
+            response.message = {message: "Tourist Id not found"}
+            helper_module.sendResponse(res, response);
+            return;
+        }
+        updateOneTouristAttractionCallback(req, res,tourist_id,response);
+    }
+    const _replaceOneTouristAttraction = function(req, res,tourist_id, response){
         console.log("_replaceOneTouristAttraction tourist attractions controller called");
         if(!helper_module.includesAllRequiredFieldsForTouristAttraction(req,res)) return;
 
-        travelHistory.tourist_attractions.id(tourist_id).name = req.body.name;
-        travelHistory.tourist_attractions.id(tourist_id).description = req.body.description;
-        travelHistory.tourist_attractions.id(tourist_id).city = req.body.city;
-        travelHistory.save((err, updatedTravelHistroy)=>helper_module.checkAndSendResponse(err, updatedTravelHistroy.tourist_attractions.id(tourist_id),response,res))
+        response.message.tourist_attractions.id(tourist_id).name = req.body.name;
+        response.message.tourist_attractions.id(tourist_id).description = req.body.description;
+        response.message.tourist_attractions.id(tourist_id).city = req.body.city;
+        response.message.save((err, updatedTravelHistroy)=>helper_module.checkAndSendResponse(err, updatedTravelHistroy.tourist_attractions.id(tourist_id),response,res))
         
     
     }
@@ -137,12 +167,12 @@ const tourist_attractionController = (function(){
         _updateOne(req, res,_replaceOneTouristAttraction);
     }
 
-    const _updateOneTouristAttractionPartialy = function(req, res, travelHistory,tourist_id,response){
+    const _updateOneTouristAttractionPartialy = function(req, res,tourist_id,response){
         console.log("_updateOneTouristAttractionPartialy tourist attraction called");
-        travelHistory.tourist_attractions.id(tourist_id).name = req.body.name || travelHistory.tourist_attractions.id(tourist_id).name;
-        travelHistory.tourist_attractions.id(tourist_id).description = req.body.description || travelHistory.tourist_attractions.id(tourist_id).description;
-        travelHistory.tourist_attractions.id(tourist_id).city = req.body.city || travelHistory.tourist_attractions.id(tourist_id).city;
-        travelHistory.save((err, updatedTravelHistroy)=>helper_module.checkAndSendResponse(err, updatedTravelHistroy.tourist_attractions.id(tourist_id),response,res))
+        response.message.tourist_attractions.id(tourist_id).name = req.body.name || response.message.tourist_attractions.id(tourist_id).name;
+        response.message.tourist_attractions.id(tourist_id).description = req.body.description || response.message.tourist_attractions.id(tourist_id).description;
+        response.message.tourist_attractions.id(tourist_id).city = req.body.city || response.message.tourist_attractions.id(tourist_id).city;
+        response.message.save((err, updatedTravelHistroy)=>helper_module.checkAndSendResponse(err, updatedTravelHistroy.tourist_attractions.id(tourist_id),response,res))
     }
     const updateOneTouristAttractionPartialy = function(req, res){
         console.log("updateOneTouristAttractionPartialy tourist attraction controller");

@@ -87,6 +87,12 @@
     if(!includesAllRequiredFields(requiredFields,req,res)) return false;
     else return true;
    }
+   const includesAllRequiredFieldsForLogin = function(req, res){
+    console.log("includesAllRequiredFieldsForLogin helper module called");
+    const requiredFields = ["username", "password"];
+    if(!includesAllRequiredFields(requiredFields,req,res)) return false;
+    else return true;
+   }
 
    const _isValidDataHelper = function(key, value,response){
         if(propertiesRule.properties.get(key)){
@@ -118,6 +124,7 @@
        includesAllRequiredFieldsForTravelHistory,
        includesAllRequiredFieldsForTouristAttraction,
        includesAllRequiredFieldsForUser,
+       includesAllRequiredFieldsForLogin,
        errorHandler,
        sendResponse,
        onSuccessDataCreation,

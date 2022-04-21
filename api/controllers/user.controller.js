@@ -1,9 +1,31 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 const helper_module = require('./helper_module');
+const bcrypt = require('bcrypt');
 const User = mongoose.model(process.env.USER_MODEL);
 
-module.exports.signUp = function(req, res){
+exports.userById = (req,res,next,id)=>{
+    console.log("userById user controller called")
+    const response = {
+        status:process.env.HTTP_OK,
+        message:{}
+    }
+    User.findById(id).exec()
+        .then((user)=>helper_module.onSuccessfullyDataReturned(user, response))
+        .catch((err)=>helper_module.errorHandler(err, response))
+        .finally(()=>_checkIfUserFoundAndLoadToReq(req,res,next, response));
+};
+
+const _checkIfUserFoundAndLoadToReq = function(req, res, next, response){
+    if(response.status!=process.env.HTTP_OK){
+        response.message={message: "User not found"}
+        helper_module.sendResponse(res, response);
+        return;
+    }
+    req.profile = response.message;
+    next();
+}
+
+exports.signUp = function(req, res){
     console.log("Add new user controller called")
     const response = {
         status: process.env.HTTP_OK,
@@ -13,7 +35,7 @@ module.exports.signUp = function(req, res){
     if(!helper_module.isValidData(req, res, response)) return;
     if(req.body.password!=req.body.repeatPassword){
         response.status = process.env.HTTP_BAD_REQUEST;
-        response.message = {message: "Your confirmation password is not match"}
+        response.message = {message:"Your confirmation password is not match"}
         helper_module.sendResponse(res, response);
         return;
     }
@@ -21,7 +43,7 @@ module.exports.signUp = function(req, res){
 };
 
 const _checkForSaltErrorAndGenerateHash = function(req, res, err, salt, response){
-    console.log("_checkForSaltErrorAndCreatUser user controller called");
+    console.log("_checkForSaltErrorAndCreatUser auth controller called");
     if(err){
         response.status = process.env.HTTP_INTERNAL_SERVER_ERROR;
         response.message = err;
@@ -32,7 +54,7 @@ const _checkForSaltErrorAndGenerateHash = function(req, res, err, salt, response
 }
 
 const _checkForHashErrorAndCreateUser = function(req, res, err, encryptedPassword,response){
-    console.log('_checkForHashErrorAndCreateUser user controller called');
+    console.log('_checkForHashErrorAndCreateUser auth controller called');
     if(err){
         response.status = process.env.HTTP_INTERNAL_SERVER_ERROR;
         response.message = err;
@@ -45,45 +67,7 @@ const _checkForHashErrorAndCreateUser = function(req, res, err, encryptedPasswor
     newUser.password = encryptedPassword;
 
     User.create(newUser)
-        .then((createdUser)=>helper_module.onSuccessDataCreation(createdUser,response))
+        .then((createdUser)=>helper_module.onSuccessDataCreation({message:"Successfully Registered"},response))
         .catch((err)=>helper_module.errorHandler(err, response))
         .finally(()=>helper_module.sendResponse(res, response));
-}
-
-module.exports.login = function(req, res){
-    console.log("Login user controller called");
-    if(!helper_module.includesAllRequiredFieldsForLogin(req, res)) return;
-    const response = {
-        status: process.env.HTTP_OK,
-        message: {}
-    }
-    User.findOne({username: req.body.username}).exec()
-        .then((user)=>helper_module.onSuccessfullyDataReturned(user,response))
-        .catch((err)=>helper_module.errorHandler(err))
-        .finally(()=>_checkIfUserFound(req, res, response));
-}
-
-const _checkIfUserFound = function(req, res, response){
-    console.log("_checkIfUserFound user controller called")
-    if(response.status!=process.env.HTTP_OK){
-        response.status = process.env.HTTP_NOT_FOUND
-        response.message = {message: "User not found!"}
-        helper_module.sendResponse(res, response);
-        return;
-    }
-    bcrypt.compare(req.body.password, response.message.password)
-        .then((result)=>helper_module.onSuccessfullyDataReturned(result, response))
-        .catch((err)=>helper_module.errorHandler(err, response))
-        .finally(()=>_ckeckIfPasswordMatchAndSendResponse(res, response));
-}
-const _ckeckIfPasswordMatchAndSendResponse = function(res, response){
-    console.log("_ckeckIfPasswordMatchAndSendResponse user controller called")
-    if(response.status!=process.env.HTTP_OK){
-        response.status = process.env.HTTP_BAD_REQUEST
-        response.message = {message: "Incorrect Password!"}
-        helper_module.sendResponse(res, response);
-        return;
-    }
-    response.message = {message: "Successfuly loggedin!"}
-    helper_module.sendResponse(res, response);
 }

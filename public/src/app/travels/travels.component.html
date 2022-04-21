@@ -20,9 +20,9 @@
                 <td>{{i+1}}</td>
                 <td>{{travel.country}}</td>
                 <td>{{travel.population}}</td>
-                <td><a class="btn  btn-outline-primary" routerLink="/edit/{{travel._id}}">Edit</a></td>
-                <td><a class="btn  btn-outline-secondary" routerLink="/view/{{travel._id}}">View</a></td>
-                <td><a (click)="onDelete(travel._id)" class="btn  btn-outline-danger">Delete</a></td>
+                <td *ngIf="isAdmin"><a class="btn  btn-outline-primary" routerLink="/edit/{{travel._id}}">Edit</a></td>
+                <td ><a class="btn  btn-outline-secondary" routerLink="/view/{{travel._id}}">View</a></td>
+                <td *ngIf="isAdmin"><a (click)="onDelete(travel._id)" class="btn  btn-outline-danger">Delete</a></td>
             </tr>
         </tbody>
     </table>

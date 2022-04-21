@@ -6,7 +6,8 @@ export const environment = {
   production: false,
   API_BASE_URL: "This is the base url prefix for backend",
   TRAVEL_HISTORIES: "This is prefix for all sub api url requests",
-  TOURISTS: "This is sub prefix for all tourist attraction api"
+  TOURISTS: "This is sub prefix for all tourist attraction api",
+  token_storage_key: "This is to store token in the local storage browser"
 };
 
 /*

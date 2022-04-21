@@ -9,17 +9,21 @@
             <li class="navbar-text">
                 <a  class="btn btn-outline-primary" routerLink="">Home</a>
             </li>
-          <li class="navbar-text">
-            <a  class="btn btn-outline-primary" routerLink="travels">Travel-Histories</a>
-          </li>
-          <li class="navbar-text">
-            <a class="btn btn-outline-primary" routerLink="create-travel-histroy">Create Travel History</a>
-          </li>
+            <li class="navbar-text">
+              <a  class="btn btn-outline-primary" routerLink="/travels">Travel-Histories</a>
+            </li>
+            <li *ngIf="isAdmin" class="navbar-text">
+              <a class="btn btn-outline-primary" routerLink="create-travel-histroy">Create Travel History</a>
+            </li>
         </ul>
-        <span class="navbar-text">
-          <a routerLink ="signup" class="btn btn-outline-primary me-3">Sign up</a>
-          <a routerLink ="signin" class="btn btn-outline-primary">Sign in</a>
+        <span *ngIf="!loggedIn" class="navbar-text">
+          <a routerLink ="/signup" class="btn btn-outline-primary me-3">Sign up</a>
+          <a routerLink ="/signin" class="btn btn-outline-primary">Sign in</a>
         </span>
+        <span *ngIf="loggedIn" class="navbar-text"> Welcome {{name}}
+          <button class="btn btn-outline-warning" (click)="logout()">Logout</button>
+        </span>
+        
       </div>
     </div>
   </nav>

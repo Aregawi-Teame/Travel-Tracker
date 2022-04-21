@@ -5,7 +5,7 @@
        console.log("onSuccessDataCreation helper method called")
        if(!createdData){
             response.status = process.env.HTTP_INTERNAL_SERVER_ERROR;
-            response.message = {message: "Data is not created please try again"};
+            response.message = "Data is not created please try again";
             return;
        }
        response.status = process.env.HTTP_CREATED;
@@ -27,7 +27,7 @@
        console.log("onSuccessfullyDataReturned helper function called");
        if(!data){
             response.status = process.env.HTTP_NOT_FOUND;
-            response.message = {message: "No data found, or provide valid Id"};
+            response.message = "No data found, or provide valid Id";
             return;
        }
        response.status = process.env.HTTP_OK;
@@ -37,7 +37,7 @@
    const handleOnDeleteResponse = function(deletedData, response){
        console.log("handleOnDeleteResponse helper function called")
        response.status = process.env.HTTP_ACCEPTED;
-       response.message = {message: "Successfully deleted!", deletedData};
+       response.message = "Successfully deleted!";
    }
 
    const handleOnUpdateResponse = function(updatedData, response){
@@ -51,7 +51,7 @@
        let isValid = mongoose.isValidObjectId(travel_history_id);
        if(isValid) return true;
        else{
-           res.status(400).json({message: "Please provide valid Id"});
+           res.status(400).json({error: "Please provide valid Id"});
            return false;
        }
    }
@@ -61,7 +61,7 @@
        const bodyKeys = Object.keys(req.body);
        for(let i =0; i<requiredFields.length;i++){
            if(bodyKeys.indexOf(requiredFields[i])<0){
-               res.status(process.env.HTTP_BAD_REQUEST).json({"Error":`${requiredFields[i]} is required`});
+               res.status(process.env.HTTP_BAD_REQUEST).json({error:`${requiredFields[i]} is required`});
                return false;
            }
        }

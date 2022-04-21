@@ -1,0 +1,20 @@
+<form #loginForm="ngForm" (ngSubmit)="login(loginForm)">
+    <div *ngIf="success" class="alert alert-success alert-dismissible fade show mt-2">
+        <strong>Successfully loggedin!</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div *ngIf="error" class="alert alert-danger alert-dismissible fade show mt-2">
+        <strong>Error!</strong> {{errorMessage}}.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div class="form-group mb-2 col-md-6">
+        <label class="text-muted">Username:</label>
+        <input type="text" class="form-control" placeholder="Enter username" name="username" ngModel>
+    </div>
+    <div class="form-group mb-2 col-md-6">
+        <label class="text-muted">Password:</label>
+        <input type="password" class="form-control" placeholder="Enter password" name="password" ngModel>
+    </div>
+    <button class="btn btn-primary m-2">Login</button>
+    | <a routerLink="/travels" class="btn btn-secondary m-2">Cancel</a>
+</form>

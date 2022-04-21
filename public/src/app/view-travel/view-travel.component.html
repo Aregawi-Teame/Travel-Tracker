@@ -5,21 +5,30 @@
             <p>Population: {{travel.population}}</p>
         </div>
         <div class="col-8">
-            <a routerLink="/edit/{{travel._id}}" class="btn  btn-outline-info m-2">Edit Travel History</a> |
-            <a routerLink="/add/{{travel._id}}" class="btn  btn-outline-primary m-2">Add Tourist Attraction</a> | 
-            <a routerLink="/travels" class="btn  btn-outline-secondary m-2">Back To List</a> |
-            <button class="btn btn-outline-danger m-2">Delete Travel History</button> 
+            <span *ngIf="isAdmin">
+                <a routerLink="/edit/{{travel._id}}" class="btn  btn-outline-info m-2">Edit Travel History</a> |
+                <a routerLink="/add/{{travel._id}}" class="btn  btn-outline-primary m-2">Add Tourist Attraction</a> | 
+            </span>
+            <a routerLink="/travels" class="btn  btn-outline-secondary m-2">Back To List</a> 
         </div>
     </div>
   <hr>
   <H1>Tourist Attraction</H1>
+  <div *ngIf="success" class="alert alert-success alert-dismissible fade show mt-2">
+    <strong>Success!</strong> Deleted successfully.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<div *ngIf="error" class="alert alert-danger alert-dismissible fade show mt-2">
+    <strong>Error!</strong> {{errorMessage}}.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
   <input class="form-control m-2" type="text" placeholder="Search using tourist attraction or city name" [(ngModel)]="userInput">
     <section *ngFor="let tourist_attraction of travel.tourist_attractions | touristAttractionFilter : userInput">
         <h3>{{tourist_attraction.name}} - City: {{tourist_attraction.city}}</h3>
         <article>
             <p>{{tourist_attraction.description}}</p>
-            <a routerLink="/edit/{{travel._id}}/tourists/{{tourist_attraction._id}}" class="btn  btn-outline-info mb-4">Edit Tourist Attraction</a> |
-            <button (click)="onDelete(travel._id, tourist_attraction._id)" class="btn btn-outline-danger mb-4">Delete Tourist Attraction</button>
+            <a *ngIf="isAdmin" routerLink="/edit/{{travel._id}}/tourists/{{tourist_attraction._id}}" class="btn  btn-outline-info mb-4">Edit Tourist Attraction</a> 
+           <span *ngIf="isAdmin"> | <button  (click)="onDelete(travel._id, tourist_attraction._id)" class="btn btn-outline-danger mb-4">Delete Tourist Attraction</button></span> 
         </article>
     </section>
 

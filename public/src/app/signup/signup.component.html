@@ -1,0 +1,31 @@
+<form #signupForm="ngForm" (ngSubmit)="addUser(signupForm)">
+    <div *ngIf="success" class="alert alert-success alert-dismissible fade show mt-2">
+        <strong>Success!</strong> Your Account has been created successfully.
+        <a routerLink="/signin" class="link">Signin</a>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div *ngIf="error" class="alert alert-danger alert-dismissible fade show mt-2">
+        <strong>Error!</strong> {{errorMessage}}.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div class="row">
+        <div class="form-group mb-2 col-md-6">
+            <label class="text-muted">Name:</label>
+            <input name="name" type="text" class="form-control" placeholder="Enter full name" ngModel>
+        </div>
+        <div class="form-group mb-2 col-md-6">
+            <label class="text-muted">Username:</label>
+            <input name="username" type="text" class="form-control" placeholder="Enter username" ngModel>
+        </div>
+        <div class="form-group mb-2 col-md-6">
+            <label class="text-muted">Password:</label>
+            <input name="password" type="password" class="form-control" placeholder="Enter password" ngModel>
+        </div>
+        <div class="form-group mb-2 col-md-6">
+            <label class="text-muted">Repeat password:</label>
+            <input name="repeatPassword" type="password" class="form-control" placeholder="Repeat password" ngModel>
+        </div>
+    </div>
+    <button class="btn btn-primary m-2">Signup</button>
+    | <a routerLink="/travels" class="btn btn-secondary m-2">Cancel</a>
+</form>

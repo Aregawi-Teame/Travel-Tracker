@@ -1,4 +1,4 @@
-<form #createTravelHistoryForm="ngForm" (ngSubmit)="createTravelHistroy(createTravelHistroyForm)">
+<form *ngIf="isAdmin" #createTravelHistoryForm="ngForm" (ngSubmit)="createTravelHistroy(createTravelHistroyForm)">
     <div *ngIf="success" class="alert alert-success alert-dismissible fade show mt-2">
         <strong>Success!</strong> Your Travel History has been saved successfully.
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>

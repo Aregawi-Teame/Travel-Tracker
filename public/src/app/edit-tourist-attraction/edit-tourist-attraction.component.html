@@ -1,4 +1,4 @@
-<form #editTouristAttractionForm="ngForm" (ngSubmit)="editTouristAttraction(editTouristAttractionForm)">
+<form *ngIf="isAdmin" #editTouristAttractionForm="ngForm" (ngSubmit)="editTouristAttraction(editTouristAttractionForm)">
     <div *ngIf="success" class="alert alert-success alert-dismissible fade show mt-2">
         <strong>Success!</strong> Updated successfully.
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>

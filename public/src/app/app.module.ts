@@ -2,21 +2,24 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 
 import { AppComponent } from './app.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { HomeComponent } from './home/home.component';
 import { FooterComponent } from './footer/footer.component';
-import { TravelsComponent } from './travels/travels.component';
+import { Travel, TravelsComponent } from './travels/travels.component';
 import { CreateTravelHistoryComponent } from './create-travel-history/create-travel-history.component';
 import { FormsModule } from '@angular/forms';
 import { ViewTravelComponent } from './view-travel/view-travel.component';
-import { AddTouristAttractionComponent } from './add-tourist-attraction/add-tourist-attraction.component';
+import { AddTouristAttractionComponent, TouristAttraction } from './add-tourist-attraction/add-tourist-attraction.component';
 import { EditTravelHistroyComponent } from './edit-travel-histroy/edit-travel-histroy.component';
 import { TableFilterPipe } from './table-filter.pipe';
 import { EditTouristAttractionComponent } from './edit-tourist-attraction/edit-tourist-attraction.component';
 import { TouristAttractionFilterPipe } from './tourist-attraction-filter.pipe';
 import { ErrorPageComponent } from './error-page/error-page.component';
+import { SignupComponent } from './signup/signup.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +35,9 @@ import { ErrorPageComponent } from './error-page/error-page.component';
     TableFilterPipe,
     EditTouristAttractionComponent,
     TouristAttractionFilterPipe,
-    ErrorPageComponent
+    ErrorPageComponent,
+    SignupComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -68,12 +73,20 @@ import { ErrorPageComponent } from './error-page/error-page.component';
         component:EditTouristAttractionComponent
       },
       {
+        path: "signup",
+        component: SignupComponent
+      },
+      {
+        path: "signin",
+        component : LoginComponent
+      },
+      {
         path:"**",
         component: ErrorPageComponent
       }
     ])
   ],
-  providers: [],
+  providers: [Travel,TouristAttraction,{provide: JWT_OPTIONS, useValue:JWT_OPTIONS},JwtHelperService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../authentication.service';
+import { Refresh } from '../navigation/navigation.component';
 
 import { TouristAttractionDataService } from '../tourist-attraction-data.service';
 export class TouristAttraction{
@@ -30,7 +31,7 @@ export class AddTouristAttractionComponent implements OnInit {
   errorMessage!:string;
   travel_history_id!:string;
   isAdmin:boolean = false;
-  constructor(private touristAttraction:TouristAttraction,private router:Router,private routes:ActivatedRoute,private authService:AuthenticationService, private touristAttractionService:TouristAttractionDataService) { }
+  constructor(private refresh:Refresh,private touristAttraction:TouristAttraction,private router:Router,private routes:ActivatedRoute,private authService:AuthenticationService, private touristAttractionService:TouristAttractionDataService) { }
 
   ngOnInit(): void {
     this.travel_history_id = this.routes.snapshot.params["travel_history_id"];
@@ -51,7 +52,9 @@ export class AddTouristAttractionComponent implements OnInit {
     this.error=false;
   }
   _redirectingUnAuthorizedUserToSigninFirst(){
-    this.router.navigate(["/signin"]).then(()=>window.location.reload())
+    this.router.navigate(["/signin"])
+    this.refresh.isAdmin = this.authService.isAdmin();
+    this.refresh.loggedIn = this.authService.isLoggedIn();
   }
   _onSuccessFullDataSaved(result:any){
     this.success = true;

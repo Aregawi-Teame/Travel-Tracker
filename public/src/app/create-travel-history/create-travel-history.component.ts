@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../authentication.service';
+import { Refresh } from '../navigation/navigation.component';
 import { TravelsDataService } from '../travels-data.service';
 import { Travel } from '../travels/travels.component';
 @Component({
@@ -16,7 +17,7 @@ export class CreateTravelHistoryComponent implements OnInit {
   success!:boolean;
   error!:boolean;
   errorMessage!:string;
-  constructor(private travel:Travel,private travelHistoryDataService:TravelsDataService, private router:Router, private authService:AuthenticationService) {
+  constructor(private refresh:Refresh,private travel:Travel,private travelHistoryDataService:TravelsDataService, private router:Router, private authService:AuthenticationService) {
     this.success = false;
     this.error=false;
    }
@@ -37,7 +38,9 @@ export class CreateTravelHistoryComponent implements OnInit {
     }
   }
   _redirectingUnAuthorizedUserToSigninFirst(){
-    this.router.navigate(["/signin"]).then(()=>window.location.reload())
+    this.router.navigate(["/signin"])
+    this.refresh.isAdmin = this.authService.isAdmin();
+    this.refresh.loggedIn = this.authService.isLoggedIn();
   }
   _onSuccessFullDataSaved(result:any){
     console.log(result);

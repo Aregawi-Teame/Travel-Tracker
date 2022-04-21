@@ -99,7 +99,6 @@ exports.requireSignin = function(req, res, next){
 }
 const _decodeTokenAndCallNextMiddleware = function(payload, req, res, next){
     console.log("_decodeTokenAndCallNextMiddleware auth controller called");
-    console.log(payload)
     const auth = {
         _id: payload._id,
         isAdmin: payload.isAdmin

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../authentication.service';
+import { Refresh } from '../navigation/navigation.component';
 import { TravelsDataService } from '../travels-data.service';
 import { Travel } from '../travels/travels.component';
 
@@ -19,7 +20,7 @@ export class EditTravelHistroyComponent implements OnInit {
   error!:boolean;
   errorMessage!:string;
   isAdmin:boolean = false;
-  constructor(private travel:Travel,private authService:AuthenticationService, private router:Router, private route:ActivatedRoute,private travelHistoryData:TravelsDataService) { }
+  constructor(private refresh:Refresh,private travel:Travel,private authService:AuthenticationService, private router:Router, private route:ActivatedRoute,private travelHistoryData:TravelsDataService) { }
 
   ngOnInit(): void {
     if(this.authService.isLoggedIn()){
@@ -46,7 +47,9 @@ export class EditTravelHistroyComponent implements OnInit {
     }
   }
   _redirectingUnAuthorizedUserToSigninFirst(){
-    this.router.navigate(["/signin"]).then(()=>window.location.reload())
+    this.router.navigate(["/signin"])
+    this.refresh.isAdmin = this.authService.isAdmin();
+    this.refresh.loggedIn = this.authService.isLoggedIn();
   }
   _onSuccessFullDataSaved(result:any){
     console.log(result);

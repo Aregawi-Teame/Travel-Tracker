@@ -1,8 +1,4 @@
 <form #loginForm="ngForm" (ngSubmit)="login(loginForm)">
-    <div *ngIf="success" class="alert alert-success alert-dismissible fade show mt-2">
-        <strong>Successfully loggedin!</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
     <div *ngIf="error" class="alert alert-danger alert-dismissible fade show mt-2">
         <strong>Error!</strong> {{errorMessage}}.
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>

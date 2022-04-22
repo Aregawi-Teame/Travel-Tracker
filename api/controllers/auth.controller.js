@@ -15,7 +15,7 @@ exports.login = function(req, res){
     }
     User.findOne({username: req.body.username}).exec()
         .then((user)=>helper_module.onSuccessfullyDataReturned(user,response))
-        .catch((err)=>helper_module.errorHandler(err))
+        .catch((err)=>helper_module.errorHandler(err,response))
         .finally(()=>_checkIfUserFound(req, res, response));
 }
 

@@ -1,10 +1,10 @@
 const rules = new Map();
-rules.set("alphabet", /^[a-zA-Z\ \' \. \, \-]{2,}$/);
+rules.set("alphabet", /^[a-zA-Z_ \ \' \. \, \-]{2,}$/);
 rules.set("number", /^[0-9]+$/);
 rules.set("alphaNumeric", /^[a-zA-Z0-9]+$/);
 rules.set("description", /^.{6,}$/);
 rules.set("username", /^[a-zA-Z]{3,}$/);
-rules.set("password", /^[a-zA-Z0-9]{6,}$/);
+rules.set("password", /^.{6,}$/);
 
 const properties = new Map();
 properties.set("country",rules.get("alphabet"));

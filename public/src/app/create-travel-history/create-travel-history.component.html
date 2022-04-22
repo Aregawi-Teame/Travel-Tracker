@@ -1,20 +1,73 @@
-<form *ngIf="isAdmin" #createTravelHistoryForm="ngForm" (ngSubmit)="createTravelHistroy(createTravelHistroyForm)">
-    <div *ngIf="success" class="alert alert-success alert-dismissible fade show mt-2">
-        <strong>Success!</strong> Your Travel History has been saved successfully.
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<form
+  *ngIf="isAdmin"
+  #createTravelHistoryForm="ngForm"
+  (ngSubmit)="createTravelHistroy(createTravelHistroyForm)"
+>
+  <div
+    *ngIf="success"
+    class="alert alert-success alert-dismissible fade show mt-2"
+  >
+    <strong>Success!</strong> Your Travel History has been saved successfully.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <div
+    *ngIf="error"
+    class="alert alert-danger alert-dismissible fade show mt-2"
+  >
+    <strong>Error!</strong> {{ errorMessage }}.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <div class="form-group col-md-6">
+    <label class="text-muted" for="country">Country:</label>
+    <input
+      required
+      pattern="[a-zA-Z_ ]{2,}"
+      #countryName="ngModel"
+      name="country"
+      id="country"
+      class="form-control"
+      type="text"
+      placeholder="Enter country"
+      ngModel
+    />
+    <div *ngIf="countryName.touched && !countryName.valid">
+      <div *ngIf="countryName.errors?.['required']">
+        <span class="text-danger">Country name is required</span>
+      </div>
+      <div *ngIf="countryName.errors?.['pattern']">
+        <span class="text-danger">Please enter valid country name</span>
+      </div>
     </div>
-    <div *ngIf="error" class="alert alert-danger alert-dismissible fade show mt-2">
-        <strong>Error!</strong> {{errorMessage}}.
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <div class="form-group col-md-6">
+    <label class="form-label text-muted" for="population">Population:</label>
+    <input
+      required
+      pattern="[0-9]+"
+      #population="ngModel"
+      name="population"
+      id="population"
+      class="form-control"
+      type="number"
+      placeholder="Enter population"
+      ngModel
+    />
+    <div *ngIf="population.touched && !population.valid">
+      <div *ngIf="population.errors?.['required']">
+        <span class="text-danger">Population number is required</span>
+      </div>
+      <div *ngIf="population.errors?.['pattern']">
+        <span class="text-danger">Please enter valid population number</span>
+      </div>
     </div>
-    <div class="form-group col-md-6">
-        <label class="text-muted" for="country">Country:</label>
-            <input name="country" id="country" class="form-control" type="text" placeholder="Enter country" ngModel>
-    </div>
-    <div class="form-group col-md-6">
-        <label class="form-label text-muted" for="population">Population:</label>
-            <input name="population" id="population" class="form-control" type="number" placeholder="Enter population" ngModel>
-    </div>
-    <button class="btn btn-primary m-2">Create</button> | <a routerLink="/travels" class="btn btn-secondary m-2">Cancel</a>
+  </div>
+  <button
+    class="btn btn-primary m-2"
+    [disabled]="!createTravelHistoryForm.form.valid"
+  >
+    Create
+  </button>
+  |
+  <a routerLink="/travels" class="btn btn-secondary m-2">Cancel</a>
 </form>
 <!-- <p>It works!</p> -->

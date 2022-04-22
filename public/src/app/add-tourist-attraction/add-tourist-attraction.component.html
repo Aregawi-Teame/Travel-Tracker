@@ -1,23 +1,96 @@
-<form *ngIf="isAdmin" #addTouristAttractionForm="ngForm" (ngSubmit)="addTouristAttraction(addTouristAttractionForm)">
-    <div *ngIf="success" class="alert alert-success alert-dismissible fade show mt-2">
-        <strong>Success!</strong> Your tourist attraction has been saved successfully.
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<form
+  *ngIf="isAdmin"
+  #addTouristAttractionForm="ngForm"
+  (ngSubmit)="addTouristAttraction(addTouristAttractionForm)"
+>
+  <div
+    *ngIf="success"
+    class="alert alert-success alert-dismissible fade show mt-2"
+  >
+    <strong>Success!</strong> Your tourist attraction has been saved
+    successfully.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <div
+    *ngIf="error"
+    class="alert alert-danger alert-dismissible fade show mt-2"
+  >
+    <strong>Error!</strong> {{ errorMessage }}.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <div class="form-group col-md-6 m-2">
+    <label for="name" class="text-muted">Attraction Name:</label>
+    <input
+      #attractioName="ngModel"
+      required
+      pattern="[a-zA-Z_ ]{2,}"
+      class="form-control"
+      id="name"
+      name="name"
+      type="text"
+      placeholder="Enter name"
+      ngModel
+    />
+    <div *ngIf="attractioName.touched && !attractioName.valid">
+      <div *ngIf="attractioName.errors?.['required']">
+        <span class="text-danger">Attraction name is required</span>
+      </div>
+      <div *ngIf="attractioName.errors?.['pattern']">
+        <span class="text-danger">Please enter valid attraction name</span>
+      </div>
     </div>
-    <div *ngIf="error" class="alert alert-danger alert-dismissible fade show mt-2">
-        <strong>Error!</strong> {{errorMessage}}.
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <div class="form-group col-md-6 m-2">
+    <label class="text-muted" for="city">City:</label>
+    <input
+      #cityName="ngModel"
+      required
+      pattern="[a-zA-Z_ ]{2,}"
+      class="form-control"
+      name="city"
+      type="text"
+      placeholder="Enter city"
+      required
+      ngModel
+    />
+  </div>
+  <div *ngIf="cityName.touched && !cityName.valid">
+    <div *ngIf="cityName.errors?.['required']">
+      <span class="text-danger">City name is required</span>
     </div>
-    <div class="form-group col-md-6 m-2">
-        <label for="name" class="text-muted">Attraction Name:</label>
-        <input class="form-control" id="name" name="name" type="text" placeholder="Enter name" ngModel>
+    <div *ngIf="cityName.errors?.['pattern']">
+      <span class="text-danger">Please enter valid city name</span>
     </div>
-    <div class="form-group col-md-6 m-2">
-        <label class="text-muted" for="city">City:</label>
-        <input class="form-control" name="city" type="text" placeholder="Enter city" required ngModel>
+  </div>
+  <div class="form-group col-md-6 m-2">
+    <label for="description" class="text-muted">Description: </label>
+    <textarea
+      #description="ngModel"
+      required
+      pattern=".{6,}"
+      name="description"
+      id="description"
+      class="form-control"
+      placeholder="Enter description"
+      ngModel
+    ></textarea>
+    <div *ngIf="description.touched && !description.valid">
+      <div *ngIf="description.errors?.['required']">
+        <span class="text-danger">Description is required</span>
+      </div>
+      <div *ngIf="description.errors?.['pattern']">
+        <span class="text-danger">Please enter valid description</span>
+      </div>
     </div>
-    <div class="form-group col-md-6 m-2">
-        <label for="description" class="text-muted">Description: </label>
-        <textarea name="description" id="description" class="form-control" placeholder="Enter description" ngModel></textarea>
-    </div>
-    <button class="btn btn-primary m-2">Add Tourist Attraction</button> | <a routerLink="/view/{{travel_history_id}}" class="btn btn-secondary m-2">Cancel</a>
+  </div>
+  <button
+    class="btn btn-primary m-2"
+    [disabled]="!addTouristAttractionForm.form.valid"
+  >
+    Add Tourist Attraction
+  </button>
+  |
+  <a routerLink="/view/{{ travel_history_id }}" class="btn btn-secondary m-2"
+    >Cancel</a
+  >
 </form>

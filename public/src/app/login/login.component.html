@@ -5,12 +5,18 @@
     </div>
     <div class="form-group mb-2 col-md-6">
         <label class="text-muted">Username:</label>
-        <input type="text" class="form-control" placeholder="Enter username" name="username" ngModel>
+        <input required #username="ngModel" type="text" class="form-control" placeholder="Enter username" name="username" ngModel>
+        <div *ngIf="username.touched && username.invalid">
+            <span *ngIf="username.errors?.['required']" class="text-danger">Username is required</span>
+        </div>
     </div>
     <div class="form-group mb-2 col-md-6">
         <label class="text-muted">Password:</label>
-        <input type="password" class="form-control" placeholder="Enter password" name="password" ngModel>
+        <input required #password="ngModel" type="password" class="form-control" placeholder="Enter password" name="password" ngModel>
+        <div *ngIf="password.touched && password.invalid">
+            <span *ngIf="password.errors?.['required']" class="text-danger">Password is required</span>
+        </div>
     </div>
-    <button class="btn btn-primary m-2">Login</button>
+    <button class="btn btn-primary m-2" [disabled]="!loginForm.form.valid">Login</button>
     | <a routerLink="/travels" class="btn btn-secondary m-2">Cancel</a>
 </form>
